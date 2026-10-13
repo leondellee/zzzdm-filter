@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 output/raw_page.html
+output/fresh_sample.html
 output/last_run.txt
 
 # 调试 / 验收产物（本地留档即可，不进仓库）
