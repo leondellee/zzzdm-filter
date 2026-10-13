@@ -7,6 +7,8 @@ output/last_run.txt
 
 # 调试 / 验收产物（本地留档即可，不进仓库）
 output/run*.txt
+output/online_run_*.txt
+output/cron_watch.txt
 output/real_sample_result.*
 output/verify_detail.json
 output/verify_report.txt
