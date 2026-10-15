@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-"""真实样本复核：保留清单 + 童装/婴幼儿相关条目定位。"""
-import re
+"""真实样本复核：保留清单 + 品牌命中明细。"""
 import sys
 
 sys.path.insert(0, ".")
 sys.stdout.reconfigure(encoding="utf-8")
 from src.classifier import Classifier  # noqa: E402
 from src.parser import parse  # noqa: E402
-
-KID = re.compile(r"儿童|童装|童鞋|男童|女童|小童|中童|大童|婴幼儿|婴儿|新生儿|宝宝|亲子")
 
 clf = Classifier()
 for f in ("output/fresh_sample.html", "output/raw_page.html"):
@@ -19,16 +16,14 @@ for f in ("output/fresh_sample.html", "output/raw_page.html"):
 
 print()
 posts = parse(open("output/fresh_sample.html", encoding="utf-8").read())
-print("=== 新样本：含童装/婴幼儿词的条目 ===")
-hit = [p for p in posts if KID.search(p.title)]
-if not hit:
-    print("  （样本中没有）")
-for p in hit:
-    v = clf.classify(p.title, p.body, p.price)
-    tag = f"剔 {v.category}｜{v.matched}" if v.drop else "保"
-    print(f"  [{tag:<22}] {p.title[:66]}")
-
-print()
 print("=== 新样本：当前保留清单（人工复核）===")
 for i, p in enumerate([p for p in posts if not clf.classify(p.title, p.body, p.price).drop], 1):
-    print(f"{i:>2}. {p.title[:72]}")
+    print(f"{i:>2}. {p.title[:76]}")
+
+print()
+print("=== 品牌命中 / 新品类命中明细 ===")
+new_cats = {"汽车保养", "学习机", "1号会员店"}
+for p in posts:
+    v = clf.classify(p.title, p.body, p.price)
+    if v.drop and (v.category in new_cats or str(v.matched).startswith("品牌·")):
+        print(f"  [{v.category}｜{v.matched}] {p.title[:58]}")
